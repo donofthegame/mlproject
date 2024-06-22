@@ -17,7 +17,7 @@ from xgboost import XGBClassifier, XGBRegressor
 from src.exception import CustomException
 from src.logger import logging
 
-from src.utils import save_object, evaluate_models
+from src.utils import save_object, evaluate_models , params
 
 @dataclass 
 class ModelTrainerConfig:
@@ -47,13 +47,13 @@ class ModelTrainer:
                 "AdaBoost Regressor": AdaBoostRegressor()
             }
             logging.info("Models dict set")
-            model_report = evaluate_models(X_train=X_train, Y_train=Y_train, X_test= X_test, Y_test=Y_test, models=models)
+            model_report = evaluate_models(X_train=X_train, Y_train=Y_train, X_test= X_test, Y_test=Y_test, models=models,params=params)
             best_model_score = max(model_report.values())
             best_model_name = max(model_report, key=model_report.get)
             best_model = models[best_model_name]
             if best_model_score < 0.6:
                 raise CustomException("No Best model found")
-            logging.info(f"Best found model on both training and testing dataset")
+            logging.info(f"Best found model on both training and testing dataset {best_model}")
 
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,
